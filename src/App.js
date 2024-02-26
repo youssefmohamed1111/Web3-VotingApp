@@ -17,6 +17,7 @@ function App() {
   const [CanVote, setCanVote] = useState(true);
 
   useEffect(() => {
+    // setVotingStatus(false);
     getCandidates();
     getRemainingTime();
     getCurrentStatus();
@@ -84,7 +85,7 @@ function App() {
   function handleAccountsChanged(accounts) {
     if (accounts.length > 0 && account !== accounts[0]) {
       setAccount(accounts[0]);
-      // canVote();
+      canVote();
     } else {
       setIsConnected(false);
       setAccount(null);
@@ -102,7 +103,7 @@ function App() {
         setAccount(address);
         console.log("Metamask Connected : " + address);
         setIsConnected(true);
-        // canVote();
+        canVote();
       } catch (err) {
         console.error(err);
       }
@@ -123,25 +124,41 @@ function App() {
       contractAbi,
       signer
     );
-    // const voteStatus = await contractInstance.
+    const voteStatus = await contractInstance.voters(await signer.getAddress());
+    setCanVote(voteStatus);
+  }
+  async function vote() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const contractInstance = new ethers.Contract(
+      contractAddress,
+      contractAbi,
+      signer
+    );
+    const tx = await contractInstance.vote(number);
+    await tx.wait();
+    canVote();
   }
 
   return (
     <div className="App">
-      {isConnected ? (
-        <Connected
-          account={account}
-          candidates={candidates}
-          remainingTime={remainingTime}
-          number={number}
-          handleNumberChange={handleNumberChange}
-          // voteFunction={vote}
-          showButton={canVote}
-          // voteFunction={vote}
-          // showButton={CanVote}
-        />
+      {votingStatus ? (
+        isConnected ? (
+          <Connected
+            account={account}
+            candidates={candidates}
+            remainingTime={remainingTime}
+            number={number}
+            handleNumberChange={handleNumberChange}
+            voted={CanVote}
+            voteFunction={vote}
+          />
+        ) : (
+          <Login connectWallet={connectToMetamask} />
+        )
       ) : (
-        <Login connectWallet={connectToMetamask} />
+        <Finished />
       )}
     </div>
   );

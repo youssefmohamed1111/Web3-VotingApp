@@ -8,7 +8,7 @@ const Connected = (props) => {
       <p className="connected-account">
         Remaining Time: {props.remainingTime} seconds
       </p>
-      {props.showButton ? (
+      {props.voted ? (
         <p className="connected-account">You have already voted</p>
       ) : (
         <div>
