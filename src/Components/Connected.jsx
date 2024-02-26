@@ -25,7 +25,7 @@ const Connected = (props) => {
         </div>
       )}
 
-      <table id="myTable" className="candidates-table">
+      {/* <table id="myTable" className="candidates-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -41,6 +41,27 @@ const Connected = (props) => {
               <td>{candidate.voteCount}</td>
             </tr>
           ))}
+        </tbody>
+      </table> */}
+      <table id="myTable" className="candidates-table">
+        <thead>
+          <tr>
+            <th>ID (Unsorted)</th>
+            <th>Candidate name</th>
+            <th>Candidate votes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.candidates
+            .slice() 
+            .sort((a, b) => b.voteCount - a.voteCount) 
+            .map((candidate, index) => (
+              <tr key={index}>
+                <td>{candidate.index}</td>
+                <td>{candidate.name}</td>
+                <td>{candidate.voteCount}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

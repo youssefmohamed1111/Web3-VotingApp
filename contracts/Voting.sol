@@ -23,7 +23,7 @@ constructor(string[] memory _candidateNames, uint256 _durationInMinutes) {
     }
     owner = msg.sender;
     votingStart = block.timestamp;
-    votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
+    votingEnd = votingStart + (_durationInMinutes * 60);
 }
 
     modifier onlyOwner {
